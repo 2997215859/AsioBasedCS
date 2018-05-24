@@ -1,6 +1,7 @@
 //
 // Created by ruiy on 18-5-24.
 //
+//#define BOOST_ASIO_ENABLE_HANDLER_TRACKING
 
 #include "server.h"
 
@@ -101,7 +102,7 @@ private:
     void do_read(){
         async_read(sock_, buffer(read_buffer_),
                    boost::bind(&self_type::read_complete, shared_from_this(), _1, _2),
-                   boost::bind(&self_type::read_complete, shared_from_this(), _1, _2));
+                   boost::bind(&self_type::on_read, shared_from_this(), _1, _2));
         post_check_ping();
     }
 

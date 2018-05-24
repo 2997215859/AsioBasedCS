@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.5)
 project(AsioBasedCS)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -29,6 +29,7 @@ if(NOT Boost_FOUND)
     message(FATAL_ERROR "Boost required to compile ROI")
 endif()
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/bin) # 将输出重定向到bin子目录
 
 include_directories(${Boost_INCLUDE_DIRS})
 

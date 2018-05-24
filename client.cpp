@@ -1,13 +1,14 @@
 //
 // Created by ruiy on 18-5-23.
 //
-
+//#define BOOST_ASIO_ENABLE_HANDLER_TRACKING
 #include "client.h"
 
 #include <boost/enable_shared_from_this.hpp>
 #include <boost/core/noncopyable.hpp>
 #include <boost/asio.hpp>
 #include <boost/thread.hpp>
+#include <iostream>
 
 namespace ba = boost::asio;
 ba::io_service service;
@@ -53,7 +54,7 @@ private:
 
     void on_connect(const error_code &err){
         if (!err) {
-            do_write("login" + username_ + "\n");
+            do_write("login " + username_ + "\n");
         } else {
             std::cout << err.message() << std::endl;
             stop();
@@ -69,6 +70,7 @@ private:
         if (!started()) return;
 
         std::string msg(read_buffer_, bytes);
+        std::cout << msg << std::endl;
         if (msg.find("login ") == 0) on_login();
         else if (msg.find("ping ") == 0) on_ping(msg);
         else if (msg.find("clients ") == 0) on_clients(msg);
@@ -117,7 +119,7 @@ private:
     void do_write(std::string msg) {
         if (!started()) return;
         std::copy(msg.begin(), msg.end(), write_buffer_);
-        sock_.async_write_some(ba::buffer(write_buffer_),
+        sock_.async_write_some(ba::buffer(write_buffer_, msg.size()),
                                boost::bind(&self_type::on_write, shared_from_this(), _1, _2));
     };
 
@@ -145,5 +147,6 @@ int main () {
         talk_to_svr::start(ep, name);
         boost::this_thread::sleep(boost::posix_time::millisec(100));
     }
+
     service.run();
 }
