@@ -34,3 +34,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 
 add_executable(client client.cpp client.h)
 target_link_libraries(client ${Boost_LIBRARIES})
+
+add_executable(server server.cpp server.h)
+target_link_libraries(server ${Boost_LIBRARIES})
