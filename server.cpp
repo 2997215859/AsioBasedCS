@@ -9,6 +9,7 @@
 #include <boost/asio.hpp>
 #include <boost/enable_shared_from_this.hpp>
 #include <iostream>
+#include <boost/thread/recursive_mutex.hpp>
 
 using namespace boost::asio;
 using namespace boost::posix_time;
@@ -19,6 +20,7 @@ class talk_to_client;
 typedef boost::shared_ptr<talk_to_client> client_ptr;
 typedef std::vector<client_ptr> array;
 array clients;
+boost::recursive_mutex clients_cs;
 
 void update_clients_changed();
 
@@ -140,6 +142,11 @@ private:
 
 
 void update_clients_changed() {
+    array copy;
+    {
+        boost::recursive_mutex::scoped_lock lk(clients_cs);
+        copy = clients;
+    }
     for (array::iterator b = clients.begin(); b!= clients.end(); b++) {
         (*b)->set_clients_changed();
     }
